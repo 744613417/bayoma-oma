@@ -261,7 +261,7 @@ MATLAB 的 `jsonencode` 无法区分标量与长度 1 的数组，因此 MATLAB 
 
 ```powershell
 cd bayoma-oma
-python python\tests\test_schema.py
+python python/tests/test_schema.py
 ```
 
 该脚本先校验两份 schema 自身可用，再对三条反例断言被拒（缺测量描述、单通道测组、

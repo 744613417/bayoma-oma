@@ -335,8 +335,8 @@ U_i = blockOp(u_i, groups)（只在本组行块上非零），V_ii = I_q
 
 | 方式 | 操作 | 生效时机 |
 | --- | --- | --- |
-| 账号级技能 | 把本目录复制到 `%USERPROFILE%\.dsh\skills\bayoma-oma\` | 下一个会话开始 |
-| DSH 插件 | `plugin_manager action=install_bundle target=<本机绝对路径>\plugin\dsh-bayoma-oma` | 重启 Harness 后 |
+| 账号级技能 | 把本目录复制到 `%USERPROFILE%\.dsh\skills/bayoma-oma\` | 下一个会话开始 |
+| DSH 插件 | `plugin_manager action=install_bundle target=<本机绝对路径>\plugin/dsh-bayoma-oma` | 重启 Harness 后 |
 
 校验是否生效：在新会话里问「列出可用技能」，或直接说「用 bayoma-oma 技能识别这批数据」。
 
@@ -392,7 +392,7 @@ python -m bayoma.io_json job.json --out result.json
 result = bayoma.io_json('job.json', 'result.json');
 ```
 
-字段的合法取值与形状由 `schema\` 下两份 JSON Schema 给出
+字段的合法取值与形状由 `schema/` 下两份 JSON Schema 给出
 （`job.schema.json` 校验描述文件、`result.schema.json` 校验结果文件，均为 2020-12、
 顶层 `additionalProperties` 为 `false`）。接入方无需解析文字说明即可先校验描述、跑完再
 校验结果。同一字段在三条识别路径下形状一致：`f`、`z`、`Sii`、`Se`、`rms`、`sn` 一律
@@ -436,9 +436,9 @@ result = bayoma.io_json('job.json', 'result.json');
 
 | 文件 | 内容 |
 | --- | --- |
-| `docs\IO_SPEC.md` | 字段、单位、缺省值、失败情形、JSON 描述与结果格式、第 8 节结果分组 |
-| `schema\` | 任务描述与结果文件的 JSON Schema；MATLAB 产物用 `python/tests/check_matlab_schema.py` 复核 |
-| `docs\USAGE.md` | 两套实现的安装、调用、示例、常见问题 |
-| `docs\ALGORITHM.md` | 逐模块对应的课本章节与式号 |
-| `docs\VERIFICATION.md` | 校核数值、现场数据、已知偏差 |
-| `docs\TUTORIAL.md` | 从零开始的分步教程 |
+| `docs/IO_SPEC.md` | 字段、单位、缺省值、失败情形、JSON 描述与结果格式、第 8 节结果分组 |
+| `schema/` | 任务描述与结果文件的 JSON Schema；MATLAB 产物用 `python/tests/check_matlab_schema.py` 复核 |
+| `docs/USAGE.md` | 两套实现的安装、调用、示例、常见问题 |
+| `docs/ALGORITHM.md` | 逐模块对应的课本章节与式号 |
+| `docs/VERIFICATION.md` | 校核数值、现场数据、已知偏差 |
+| `docs/TUTORIAL.md` | 从零开始的分步教程 |

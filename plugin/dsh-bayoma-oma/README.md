@@ -22,7 +22,7 @@ DeepSeek-Harness 插件包，把 `bayoma-oma` 技能注册到当前 profile。�
 在工作区的包目录上执行：
 
 ```text
-plugin_manager action=install_bundle target=<本机绝对路径>\plugin\dsh-bayoma-oma
+plugin_manager action=install_bundle target=<本机绝对路径>\plugin/dsh-bayoma-oma
 ```
 
 安装后插件进入当前 profile 的 `dsh.profile.bundles`，对所有会话生效并在重启后保留。
@@ -85,13 +85,13 @@ plugin_manager action=set_plugin target=dsh-bayoma-oma enabled=false
 
 ### 交给其他软件或智能体
 
-结果与描述文件的字段形状由 `schema\` 下两份 JSON Schema 给出
+结果与描述文件的字段形状由 `schema/` 下两份 JSON Schema 给出
 （`job.schema.json`、`result.schema.json`，均为 2020-12）。调用方无需读技能正文即可先
 校验描述文件、跑完再校验结果文件，再按字段取值；技能正文第 11.2 节给出命令行写法。
 
 ### 与账号级技能的关系
 
-插件注册的技能与账号级技能目录 `%USERPROFILE%\.dsh\skills\bayoma-oma\SKILL.md` 内容相同。
+插件注册的技能与账号级技能目录 `%USERPROFILE%\.dsh\skills/bayoma-oma\SKILL.md` 内容相同。
 两者任选其一即可；同时存在时以插件注册的为准（`source: runtime`）。
 
 ## 说明

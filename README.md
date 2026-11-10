@@ -45,7 +45,7 @@ OUT = bayoma.bayoma(IN);
 disp(OUT.f);  disp(OUT.z);  disp(OUT.phi);
 ```
 
-机器可读接口（两套实现同一份 JSON 描述），在 `python\` 目录下运行：
+机器可读接口（两套实现同一份 JSON 描述），在 `python/` 目录下运行：
 
 ```powershell
 cd python
@@ -90,20 +90,20 @@ result = bayoma.io_json('job.json');
 自检命令：
 
 ```powershell
-python python\tests\test_smoke.py          # 七项，约 2 分钟
-python python\tests\test_condense.py       # 参考自由度凝聚
-python python\tests\test_asynchronous.py   # 异步数据（课本 10.4 节）
-python python\tests\test_async_json.py     # 异步数据的 JSON 接口
-python python\tests\test_async_multi_json.py  # 异步多阶的 JSON 导出，约 40 s
-python python\tests\test_async_json_cross.py  # 异步 JSON 两侧对照，约 3 分钟
-python python\tests\test_schema.py     # 两份 JSON Schema 与四类算例，约 6 分钟
-python python\tests\test_results.py    # 结果分组（识别与组装），约 8 分钟
-python python\tests\check_matlab_schema.py  # MATLAB 结果文件对同一份 schema
-python python\tests\test_field_data.py     # 现场实测数据（需 pcode 数据目录）
-python python\tests\test_monte_carlo.py 20 # 统计校核，约 205 s
-python python\tests\test_cross_law.py      # 两侧定律逐项对照
-python python\tests\test_uncertainty.py    # 第 16 章 Fisher 矩阵与边际定律一致
-python python\tests\test_tutorial_snippets.py  # 教程片段核对，约 40 s
+python python/tests/test_smoke.py          # 七项，约 2 分钟
+python python/tests/test_condense.py       # 参考自由度凝聚
+python python/tests/test_asynchronous.py   # 异步数据（课本 10.4 节）
+python python/tests/test_async_json.py     # 异步数据的 JSON 接口
+python python/tests/test_async_multi_json.py  # 异步多阶的 JSON 导出，约 40 s
+python python/tests/test_async_json_cross.py  # 异步 JSON 两侧对照，约 3 分钟
+python python/tests/test_schema.py     # 两份 JSON Schema 与四类算例，约 6 分钟
+python python/tests/test_results.py    # 结果分组（识别与组装），约 8 分钟
+python python/tests/check_matlab_schema.py  # MATLAB 结果文件对同一份 schema
+python python/tests/test_field_data.py     # 现场实测数据（需 pcode 数据目录）
+python python/tests/test_monte_carlo.py 20 # 统计校核，约 205 s
+python python/tests/test_cross_law.py      # 两侧定律逐项对照
+python python/tests/test_uncertainty.py    # 第 16 章 Fisher 矩阵与边际定律一致
+python python/tests/test_tutorial_snippets.py  # 教程片段核对，约 40 s
 ```
 
 ```matlab
@@ -139,7 +139,7 @@ cd('matlab/tests'); run_all          % 十四项，约 30 分钟
 - 账号级技能目录（立即生效，无需重启）：
 
 ```powershell
-Copy-Item -Recurse -Force 'skill\bayoma-oma' "$env:USERPROFILE\.dsh\skills\"
+Copy-Item -Recurse -Force 'skill/bayoma-oma' "$env:USERPROFILE\.dsh\skills"
 ```
 
 - DSH 插件（随 Harness 启动注册，重启后生效）：
@@ -157,8 +157,8 @@ plugin_manager action=install_bundle target=<本机绝对路径>\plugin\dsh-bayo
 同步命令：
 
 ```powershell
-$src = 'skill\bayoma-oma\SKILL.md'
-Copy-Item $src '%USERPROFILE%\.dsh\skills\bayoma-oma\SKILL.md' -Force
+$src = 'skill/bayoma-oma/SKILL.md'
+Copy-Item $src "$env:USERPROFILE\.dsh\skills\bayoma-oma\SKILL.md" -Force
 Copy-Item $src 'plugin\dsh-bayoma-oma\skills\bayoma-oma\SKILL.md' -Force
 ```
 

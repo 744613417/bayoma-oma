@@ -626,7 +626,7 @@ pcode 附带的现场数据（pcode 参考包的 `example/field data/`）
 两套实现各带一份自检脚本，可在改动后一次跑完核心路径：
 
 ```powershell
-python python\tests\test_smoke.py
+python python/tests/test_smoke.py
 ```
 
 ```matlab
@@ -639,7 +639,7 @@ Python 自检覆盖单模态、多模态、多测组、自动选带、JSON 接�
 片段、JSON 契约）单独运行：
 
 ```powershell
-python python\tests\test_condense.py
+python python/tests/test_condense.py
 ```
 
 MATLAB 的 `run_all` 逐个运行 `matlab/tests/` 下的十四个脚本（含 `test_condense`、
@@ -655,11 +655,11 @@ MATLAB R2022b 在该算例上的偶发问题，与本工程代码无关；遇到
 分别调用 Python 侧生成脚本或 `gen_for_python` 现做一份。
 
 ```powershell
-python python\tests\test_asynchronous.py
-python python\tests\test_async_json.py
-python python\tests\test_async_multi_json.py  # 异步多阶的 JSON 导出，约 40 s
-python python\tests\test_async_json_cross.py   # 调用 MATLAB，约 3 分钟
-python python\tests\test_cross_law.py
+python python/tests/test_asynchronous.py
+python python/tests/test_async_json.py
+python python/tests/test_async_multi_json.py  # 异步多阶的 JSON 导出，约 40 s
+python python/tests/test_async_json_cross.py   # 调用 MATLAB，约 3 分钟
+python python/tests/test_cross_law.py
 ```
 
 `test_asynchronous` 校核异步模型：式 (10.42) 快速式与逐频率直接式一致、
@@ -682,7 +682,7 @@ schema → 识别 → 结果过 schema → 结果文件可读回」，共 17 项
 统计性质的校核（1.4 节）与现场数据校核（第 8 节）不在快速自检内，单独运行：
 
 ```powershell
-python python\tests\test_monte_carlo.py 20
+python python/tests/test_monte_carlo.py 20
 ```
 
 缺省 20 个种子约需 205 s，100 个种子约需 1030 s。脚本判定四个参数的偏差在 2 个标准误
@@ -691,7 +691,7 @@ python python\tests\test_monte_carlo.py 20
 现场数据的校核依赖外部数据目录：
 
 ```powershell
-python python\tests\test_field_data.py
+python python/tests/test_field_data.py
 ```
 
 ## 11. 教程片段的可执行性核对
@@ -700,7 +700,7 @@ python python\tests\test_field_data.py
 定律比值、最优记录长度、多测组全局振型与 JSON 端到端结果：
 
 ```powershell
-python python\tests\test_tutorial_snippets.py
+python python/tests/test_tutorial_snippets.py
 ```
 
 实测十三项全部通过，多测组全局振型 MAC 0.999962，定律与解析协方差的阻尼比比值 1.0121，
@@ -717,7 +717,7 @@ python python\tests\test_tutorial_snippets.py
 与内部一致性。
 
 ```powershell
-python python\tests\test_results.py
+python python/tests/test_results.py
 ```
 
 ### 12.1 同步识别的 `recognition` 分组（27 项）

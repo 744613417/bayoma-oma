@@ -25,14 +25,14 @@
 
 ```text
 
-├─ python\bayoma\        Python 实现（包，可直接 import）
-├─ matlab\+bayoma\       MATLAB 实现（包，addpath 后调用）
-├─ docs\                 输入输出规范、使用说明、分步教程、算法对照、校核记录、复用检索
-├─ examples\             两套实现的调用示例（合成数据，可直接运行）
-├─ promote\              本交接文件与实现过程、实现效果说明
-├─ skill\bayoma-oma\     与课本对应的技能包
-├─ plugin\               在 DeepSeek-Harness 中加载的插件
-└─ _work\                勘察与调试过程的临时脚本（可删除，不属于交付物）
+├─ python/bayoma\        Python 实现（包，可直接 import）
+├─ matlab/+bayoma\       MATLAB 实现（包，addpath 后调用）
+├─ docs/                 输入输出规范、使用说明、分步教程、算法对照、校核记录、复用检索
+├─ examples/             两套实现的调用示例（合成数据，可直接运行）
+├─ promote/              本交接文件与实现过程、实现效果说明
+├─ skill/bayoma-oma\     与课本对应的技能包
+├─ plugin/               在 DeepSeek-Harness 中加载的插件
+└─ _work/                勘察与调试过程的临时脚本（可删除，不属于交付物）
 ```
 
 ## 3. 环境
@@ -102,25 +102,25 @@ result = bayoma.io_json('job.json');
 
 ```powershell
 # 账号级技能目录，立即生效
-Copy-Item -Recurse -Force 'skill\bayoma-oma' "$env:USERPROFILE\.dsh\skills\"
+Copy-Item -Recurse -Force 'skill/bayoma-oma' "$env:USERPROFILE\.dsh\skills/"
 ```
 
 ```powershell
 # Harness 插件，重启后生效
-plugin_manager action=install_bundle target=<本机绝对路径>\plugin\dsh-bayoma-oma
+plugin_manager action=install_bundle target=<本机绝对路径>\plugin/dsh-bayoma-oma
 ```
 
 插件 `plugin/dsh-bayoma-oma/` 由 `cordis.patch.yml` 插入一个 `bayoma-oma` 条目，
 `lib/startup.js` 读取自带的 `skills/bayoma-oma/SKILL.md`，校验 frontmatter 后调用
 `ctx.skills.register` 注册。两份内容相同，装任一份即可。
 
-三处副本（工程 `skill/`、账号级 `%USERPROFILE%\.dsh\skills\`、插件 `skills/`）现均为
+三处副本（工程 `skill/`、账号级 `%USERPROFILE%\.dsh\skills/`、插件 `skills/`）现均为
 22098 B、SHA256 前缀 `0e04cd5fb1c60c97`（385 行）。改动技能正文后按下列命令同步三处：
 
 ```powershell
-$src = 'skill\bayoma-oma\SKILL.md'
-Copy-Item $src '%USERPROFILE%\.dsh\skills\bayoma-oma\SKILL.md' -Force
-Copy-Item $src 'plugin\dsh-bayoma-oma\skills\bayoma-oma\SKILL.md' -Force
+$src = 'skill/bayoma-oma\SKILL.md'
+Copy-Item $src '%USERPROFILE%\.dsh\skills/bayoma-oma\SKILL.md' -Force
+Copy-Item $src 'plugin/dsh-bayoma-oma\skills/bayoma-oma\SKILL.md' -Force
 ```
 
 技能正文第 11 节为使用说明（安装、调用、调用前确认的四项、判读与交付、常见误用、

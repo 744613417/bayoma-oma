@@ -142,7 +142,7 @@ cv = single_mode.coefficients_of_variation(res, cov)
 
 ### 2.7 JSON 接口
 
-在 `python\` 目录下运行 `-m` 形式，或先把包目录加入 `PYTHONPATH`：
+在 `python/` 目录下运行 `-m` 形式，或先把包目录加入 `PYTHONPATH`：
 
 ```powershell
 cd python
@@ -359,7 +359,7 @@ disp(rec.spatial.figures);                 % figs/mode_00.png
 Python（七项，约 2 分钟，全部通过返回 0）：
 
 ```powershell
-python python\tests\test_smoke.py
+python python/tests/test_smoke.py
 ```
 
 MATLAB（十四项，约 30 分钟，任一失败不中断后续）：
@@ -379,21 +379,21 @@ run_all
 统计性质与现场实测数据七项校核，未并入快速自检：
 
 ```powershell
-python python\tests\test_condense.py        # 课本 Example 14.2
-python python\tests\test_asynchronous.py    # 异步数据，四个算例
-python python\tests\test_uncertainty.py     # 第 16 章 Fisher 矩阵
-python python\tests\test_cross_law.py       # 两侧定律逐项对照
-python python\tests\test_tutorial_snippets.py  # 教程片段可执行性
-python python\tests\test_monte_carlo.py 20  # 20 个种子，约 205 s
+python python/tests/test_condense.py        # 课本 Example 14.2
+python python/tests/test_asynchronous.py    # 异步数据，四个算例
+python python/tests/test_uncertainty.py     # 第 16 章 Fisher 矩阵
+python python/tests/test_cross_law.py       # 两侧定律逐项对照
+python python/tests/test_tutorial_snippets.py  # 教程片段可执行性
+python python/tests/test_monte_carlo.py 20  # 20 个种子，约 205 s
 ```
 
 异步数据的 JSON 接口与跨语言核对：
 
 ```powershell
-python python\tests\test_async_json.py
-python python\tests\test_async_multi_json.py  # 异步多阶的 JSON 导出
-python python\tests\test_async_json_cross.py  # 调用 MATLAB，约 3 分钟
-python python\tests\test_schema.py            # 两份 JSON Schema，约 6 分钟
+python python/tests/test_async_json.py
+python python/tests/test_async_multi_json.py  # 异步多阶的 JSON 导出
+python python/tests/test_async_json_cross.py  # 调用 MATLAB，约 3 分钟
+python python/tests/test_schema.py            # 两份 JSON Schema，约 6 分钟
 ```
 
 `test_schema.py` 校验 `schema/job.schema.json` 与 `schema/result.schema.json` 自身可用，
@@ -404,7 +404,7 @@ MATLAB 侧写出的结果文件用同一份 schema 核对，需先跑过 `matlab
 （它把结果写入系统临时目录）：
 
 ```powershell
-python python\tests\check_matlab_schema.py
+python python/tests/check_matlab_schema.py
 ```
 
 该脚本读取临时目录中的异步单阶与异步多阶结果文件，逐份校验并打印顶层不符的字段路径。
@@ -412,7 +412,7 @@ python python\tests\check_matlab_schema.py
 现场数据核对依赖 pcode 附带的数据目录：
 
 ```powershell
-python python\tests\test_field_data.py
+python python/tests/test_field_data.py
 ```
 
 `run_all` 偶发在某个脚本中途退出，标准输出末行为
@@ -456,5 +456,5 @@ python python\tests\test_field_data.py
 命令与预期输出。该文件里的调用片段由 `python/tests/test_tutorial_snippets.py` 逐条执行核对：
 
 ```powershell
-python python\tests\test_tutorial_snippets.py
+python python/tests/test_tutorial_snippets.py
 ```

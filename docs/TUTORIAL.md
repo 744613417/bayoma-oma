@@ -31,7 +31,7 @@ ver('optim')
 
 ```powershell
 cd bayoma-oma
-python python\tests\test_smoke.py
+python python/tests/test_smoke.py
 ```
 
 预期末行为 `全部通过`，退出码 0，约 1 分钟。
@@ -44,7 +44,7 @@ python python\tests\test_smoke.py
 
 ```powershell
 cd bayoma-oma
-python examples\py_single_mode.py
+python examples/py_single_mode.py
 ```
 
 预期输出（数值会有小差异，因为随机种子固定为 7，实际应逐位接近）：
@@ -317,7 +317,7 @@ JSON 描述见 [IO_SPEC.md](IO_SPEC.md) 6.1 节的 `asynchronous` 段。
 }
 ```
 
-执行（先把包目录加进 `PYTHONPATH`，或在 `python\` 目录下运行）：
+执行（先把包目录加进 `PYTHONPATH`，或在 `python/` 目录下运行）：
 
 ```powershell
 $env:PYTHONPATH = "$PWD/python"
@@ -337,7 +337,7 @@ result = bayoma.io_json('D:\data\job.json');
 交给别的软件或智能体之前，建议先用工程里的两份 JSON Schema 校验，避免字段形状对不上：
 
 ```powershell
-python python\tests\test_schema.py    # 工程自检，约 6 分钟
+python python/tests/test_schema.py    # 工程自检，约 6 分钟
 ```
 
 自己调用时只需两行（`schema/job.schema.json` 校验描述文件、`schema/result.schema.json`
@@ -397,32 +397,32 @@ jsonschema.validate(result, json.load(open("schema/result.schema.json", encoding
 ```powershell
 # 自检（约 1 分钟）
 cd bayoma-oma
-python python\tests\test_smoke.py
+python python/tests/test_smoke.py
 
 # 参考自由度凝聚校核（课本 Example 14.2）
-python python\tests\test_condense.py
+python python/tests/test_condense.py
 
 # 异步数据校核（四个算例）与 JSON 端到端
-python python\tests\test_asynchronous.py
-python python\tests\test_async_json.py
+python python/tests/test_asynchronous.py
+python python/tests/test_async_json.py
 
 # 统计校核（20 个种子，约 205 s）
-python python\tests\test_monte_carlo.py 20
+python python/tests/test_monte_carlo.py 20
 
 # 第 16 章 Fisher 矩阵与表 15.1 的一致性与闭式核对（秒级）
-python python\tests\test_uncertainty.py
+python python/tests/test_uncertainty.py
 
 # 两份 JSON Schema 与四类算例（约 6 分钟）
-python python\tests\test_schema.py
+python python/tests/test_schema.py
 
 # 现场实测数据核对（依赖 pcode 数据目录）
-python python\tests\test_field_data.py
+python python/tests/test_field_data.py
 
 # 示例
-python examples\py_single_mode.py
-python examples\py_multi_mode.py
-python examples\py_multi_setup.py
-python examples\py_json_job.py
+python examples/py_single_mode.py
+python examples/py_multi_mode.py
+python examples/py_multi_setup.py
+python examples/py_json_job.py
 
 # MATLAB 全量自检（十四个脚本，约 30 分钟）
 ```
