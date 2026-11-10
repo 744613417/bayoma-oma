@@ -1,0 +1,32 @@
+{
+  "name": "dsh-bayoma-oma",
+  "version": "0.1.0",
+  "description": "DeepSeek-Harness bundle for automatic Bayesian operational modal analysis (BAYOMA): registers the textbook-based skill and exposes the local Python/MATLAB implementations.",
+  "type": "module",
+  "main": "lib/startup.js",
+  "exports": {
+    ".": "./lib/startup.js",
+    "./startup": "./lib/startup.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "skills",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "modal-analysis",
+    "bayoma",
+    "structural-dynamics"
+  ],
+  "license": "MIT"
+}

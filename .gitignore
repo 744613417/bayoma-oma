@@ -1,0 +1,34 @@
+# 忽略规则
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# 运行产物：合成数据缓存、临时结果、图件
+_work/
+*.mat
+*.npy
+*.npz
+*.h5
+*.out
+*.log
+
+# 结果文件
+result.json
+*_result.json
+figs/
+
+# MATLAB
+*.asv
+*.mex*
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

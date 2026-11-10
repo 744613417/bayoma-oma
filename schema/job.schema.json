@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/bayoma/job.schema.json",
+  "title": "BAYOMA 识别任务描述文件",
+  "description": "供其他软件或智能体传给 Python（bayoma.io_json）或 MATLAB（bayoma.io_json）的识别任务描述。三类测量组织方式（单测组同步、multi_setup、asynchronous）互斥，同时给出时按 asynchronous → multi_setup → 单测组的顺序取首个。字段说明见 docs/IO_SPEC.md 第 6 节。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "data": { "$ref": "#/$defs/dataSource" },
+    "fs": { "type": "number", "exclusiveMinimum": 0, "description": "采样频率，单位 Hz。data 内已给出时以 data 为准。" },
+    "bands": { "$ref": "#/$defs/bands" },
+    "f0": { "$ref": "#/$defs/f0" },
+    "options": { "$ref": "#/$defs/options" },
+    "multi_setup": { "$ref": "#/$defs/multiSetup" },
+    "asynchronous": { "$ref": "#/$defs/asynchronous" },
+    "geometry": { "$ref": "#/$defs/geometry" },
+    "figures": {
+      "type": "object",
+      "description": "空间可视化的落盘设置。未给出时只在结果里返回几何与振型数据，不画图。",
+      "additionalProperties": false,
+      "properties": {
+        "dir": { "type": "string", "minLength": 1, "description": "图片输出目录；不存在时自动创建。" }
+      }
+    },
+    "spectra": {
+      "type": "boolean",
+      "description": "是否在 recognition 分组里给出时程数据的 PSD 谱与奇异值谱。缺省 false。"
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "path": { "type": "string", "minLength": 1 } }
+    }
+  },
+  "anyOf": [
+    { "required": ["data"] },
+    { "required": ["multi_setup"] },
+    { "required": ["asynchronous"] }
+  ],
+  "$defs": {
+    "dataSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "format": { "enum": ["csv", "tsv", "npy", "mat"] },
+        "fs": { "type": "number", "exclusiveMinimum": 0 },
+        "delimiter": { "type": "string", "minLength": 1 },
+        "skip_header": { "type": "integer", "minimum": 0 },
+        "key": { "type": "string", "minLength": 1 }
+      }
+    },
+    "bands": {
+      "type": "array",
+      "minItems": 1,
+      "description": "识别频带，每行 [下界, 上界]，单位 Hz。",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": { "type": "number" }
+      }
+    },
+    "f0": {
+      "type": "array",
+      "description": "各频带内固有频率初值。外层长度等于频带数，内层长度等于该频带的模态阶数。",
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "q": { "enum": [0, 1, 2], "description": "模态频响函数的导数阶次：0 加速度、1 速度、2 位移。" },
+        "p": {
+          "description": "逐通道预处理指数，标量或长度等于通道数的数组。",
+          "oneOf": [
+            { "enum": [0, 1, 2] },
+            { "type": "array", "items": { "enum": [0, 1, 2] } }
+          ]
+        },
+        "maxiter": { "type": "integer", "minimum": 1 },
+        "mute": { "enum": [0, 1] },
+        "ichan": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+        "iband": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+        "f1f2d": { "$ref": "#/$defs/bands" }
+      }
+    },
+    "multiSetup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["n_dof", "setups"],
+      "properties": {
+        "n_dof": { "type": "integer", "minimum": 1, "description": "全局自由度数。" },
+        "setups": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["data", "dofs", "bands"],
+            "properties": {
+              "data": { "$ref": "#/$defs/dataSource" },
+              "dofs": {
+                "type": "array",
+                "minItems": 1,
+                "description": "该测组各通道对应的全局自由度编号，从 0 起计。",
+                "items": { "type": "integer", "minimum": 0 }
+              },
+              "bands": { "$ref": "#/$defs/bands" },
+              "f0": { "$ref": "#/$defs/f0" }
+            }
+          }
+        }
+      }
+    },
+    "asynchronous": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data", "groups", "bands"],
+      "properties": {
+        "data": { "$ref": "#/$defs/dataSource" },
+        "groups": {
+          "type": "array",
+          "minItems": 1,
+          "description": "测组划分。每组是同步采集的通道索引列表，从 0 起计；组内同步、组间不共用时钟，各组互不重叠且覆盖全部通道。",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "items": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "bands": { "$ref": "#/$defs/bands" },
+        "f0": { "type": "array", "description": "各阶固有频率初值（一维）；与 n_modes 配套。", "items": { "type": "number", "exclusiveMinimum": 0 } },
+        "n_modes": { "type": "integer", "minimum": 1, "description": "频带内模态阶数，缺省 1；大于 1 时走多阶模型，各阶对另给独立相干矩阵。" },
+        "q": { "enum": [0, 1, 2] }
+      }
+    },
+    "geometry": {
+      "type": "object",
+      "description": "通道的空间几何与连接关系。给出后 recognition 与 assembly 分组各画一份振型空间图。",
+      "additionalProperties": false,
+      "required": ["channels"],
+      "properties": {
+        "channels": {
+          "type": "array",
+          "minItems": 1,
+          "description": "各通道的位置与测量方向，顺序必须与数据列顺序一致。",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["position", "direction"],
+            "properties": {
+              "name": { "type": "string" },
+              "position": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": { "type": "number" },
+                "description": "通道位置坐标，长度 3。"
+              },
+              "direction": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": { "type": "number" },
+                "description": "测量方向向量，长度 3、非零；内部按单位向量归一。"
+              }
+            }
+          }
+        },
+        "connections": {
+          "type": "array",
+          "description": "通道连接关系（结构拓扑），每项为一对通道索引，用于在图上画未变形的骨架。",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    }
+  }
+}

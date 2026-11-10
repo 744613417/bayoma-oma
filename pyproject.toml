@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bayoma"
+version = "0.1.0"
+description = "自动贝叶斯运行模态分析（BAYOMA）：环境振动数据的模态参数识别与后验不确定度"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "BAYOMA contributors" }]
+keywords = ["modal-analysis", "bayoma", "operational-modal-analysis", "structural-dynamics", "system-identification"]
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+
+[project.optional-dependencies]
+schema = ["jsonschema>=4.0"]
+plot = ["matplotlib>=3.6"]
+dev = ["jsonschema>=4.0", "matplotlib>=3.6"]
+
+[project.scripts]
+bayoma-json = "bayoma.io_json:main"
+
+[tool.setuptools]
+package-dir = { "" = "python" }
+
+[tool.setuptools.packages.find]
+where = ["python"]
+include = ["bayoma*"]
+
+[tool.setuptools.package-data]
+bayoma = ["py.typed"]

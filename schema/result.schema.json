@@ -1,0 +1,404 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/bayoma/result.schema.json",
+  "title": "BAYOMA 识别结果文件",
+  "description": "两套实现（Python 与 MATLAB）输出同一结构。复数矩阵按 {\"re\": [[…]], \"im\": [[…]]} 给出。识别的补充结果放在 recognition 分组，异步数据组装的补充结果放在 assembly 分组；字段说明见 docs/IO_SPEC.md 第 2 节、第 6.2 节与第 8 节。",
+  "type": "object",
+  "required": ["f", "z", "Sii", "Se", "phi", "rms", "S", "coefv", "cmat", "sn", "time_req", "bands", "nch", "fs", "n_modes", "input"],
+  "additionalProperties": false,
+  "properties": {
+    "f": { "$ref": "#/$defs/vector", "description": "各阶固有频率，单位 Hz。" },
+    "z": { "$ref": "#/$defs/vector", "description": "各阶阻尼比，无量纲。" },
+    "Sii": { "$ref": "#/$defs/vector", "description": "各阶模态力自谱（单边），单位 数据单位²/Hz。" },
+    "Se": { "$ref": "#/$defs/vector", "description": "各阶通道噪声谱（单边）。单测组时各阶同值，异步数据时为逐测组的值。" },
+    "phi": { "$ref": "#/$defs/complexMatrix", "description": "振型，每列一阶，欧氏范数为 1。单测组异步多阶（ng=1、m>1）时可为复矩阵。" },
+    "rms": { "$ref": "#/$defs/vector", "description": "模态加速度均方根，sqrt(pi*Sii*f/(4*z))。" },
+    "S": {
+      "type": "array",
+      "description": "各频带的模态力谱矩阵；异步数据时为单个矩阵。",
+      "items": { "$ref": "#/$defs/complexMatrix" }
+    },
+    "coefv": {
+      "type": "object",
+      "description": "各参数的变异系数。同步识别用 Sii，异步与多测组结果用 S；异步结果另含 v（相干矩阵非对角元方差之和的平方根）。",
+      "additionalProperties": false,
+      "properties": {
+        "f": { "$ref": "#/$defs/vector" },
+        "z": { "$ref": "#/$defs/vector" },
+        "Sii": { "$ref": "#/$defs/vector" },
+        "S": { "oneOf": [{ "type": "number" }, { "$ref": "#/$defs/vector" }, { "$ref": "#/$defs/complexFlat" }] },
+        "S_off": { "oneOf": [{ "$ref": "#/$defs/vector" }, { "$ref": "#/$defs/complexFlat" }] },
+        "Se": { "oneOf": [{ "type": "number" }, { "$ref": "#/$defs/vector" }] },
+        "phi": { "oneOf": [{ "type": "number" }, { "$ref": "#/$defs/vector" }] },
+        "rms": { "$ref": "#/$defs/vector" },
+        "v": { "oneOf": [{ "type": "number" }, { "$ref": "#/$defs/vector" }] }
+      }
+    },
+    "cmat": {
+      "type": "array",
+      "description": "各频带的无量纲参数协方差矩阵，排列顺序 [f, z, diag(S), Re(offdiag S), Im(offdiag S), Se, phi]。",
+      "items": { "$ref": "#/$defs/matrix" }
+    },
+    "sn": { "$ref": "#/$defs/vector", "description": "模态信噪比 Sii/(4*Se*z^2)，无量纲。" },
+    "time_req": { "$ref": "#/$defs/matrix", "description": "2 × 频带数，分别为求最可能值与求后验协方差的耗时，单位 s。" },
+    "bands": { "$ref": "#/$defs/matrix", "description": "实际使用的识别频带，每行 [下界, 上界]，单位 Hz。" },
+    "nch": { "type": "integer", "minimum": 1 },
+    "fs": { "type": "number", "exclusiveMinimum": 0 },
+    "n_modes": { "type": "integer", "minimum": 1 },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fs", "nch", "nt", "duration"],
+      "properties": {
+        "fs": { "type": "number", "exclusiveMinimum": 0 },
+        "nch": { "type": "integer", "minimum": 1 },
+        "nt": { "type": "integer", "minimum": 1 },
+        "duration": { "type": "number", "minimum": 0 },
+        "n_setup": { "type": "integer", "minimum": 1 },
+        "n_group": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "description": "仅异步数据结果：测组划分，0 起计。",
+      "items": { "type": "array", "items": { "type": "integer", "minimum": 0 } }
+    },
+    "coherence": {
+      "oneOf": [
+        { "$ref": "#/$defs/complexMatrix" },
+        {
+          "type": "object",
+          "description": "多阶异步结果：键为阶对（v12、v13 等），值为该阶对的 q×q 相干矩阵。",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^v[0-9]+$" },
+          "additionalProperties": { "$ref": "#/$defs/complexMatrix" }
+        }
+      ]
+    },
+    "recognition": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/recognition" }
+      ],
+      "description": "识别结果分组：频带、阶次映射、模态区分度、联合后验协方差、各阶振型不确定性、谱、空间可视化。"
+    },
+    "assembly": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/assembly" }
+      ],
+      "description": "异步数据组装结果分组：全局振型、识别与组装不确定性的合成、后验协方差、索引、空间可视化。"
+    },
+    "elapsed": { "type": "number", "minimum": 0, "description": "总耗时，单位 s；仅命令行入口写出。" }
+  },
+  "$defs": {
+    "vector": { "type": "array", "items": { "type": "number" } },
+    "matrix": { "type": "array", "items": { "type": "array", "items": { "type": "number" } } },
+    "numberOrNull": { "type": ["number", "null"] },
+    "stringOrNull": { "type": ["string", "null"] },
+    "complexFlat": {
+      "type": "object",
+      "required": ["re", "im"],
+      "additionalProperties": false,
+      "properties": { "re": { "$ref": "#/$defs/vector" }, "im": { "$ref": "#/$defs/vector" } }
+    },
+    "complexMatrix": {
+      "oneOf": [
+        { "$ref": "#/$defs/matrix" },
+        {
+          "type": "object",
+          "required": ["re", "im"],
+          "additionalProperties": false,
+          "properties": { "re": { "$ref": "#/$defs/matrix" }, "im": { "$ref": "#/$defs/matrix" } }
+        }
+      ]
+    },
+    "bandEntry": {
+      "type": "object",
+      "description": "一个识别频带的记录。",
+      "additionalProperties": false,
+      "required": ["band_index", "lower", "upper", "n_modes"],
+      "properties": {
+        "band_index": { "type": "integer", "minimum": 0 },
+        "lower": { "type": "number" },
+        "upper": { "type": "number" },
+        "bandwidth": { "type": "number" },
+        "n_modes": { "type": "integer", "minimum": 0 },
+        "f0": { "$ref": "#/$defs/vector", "description": "代入计算的各阶频率初值，单位 Hz。" },
+        "peak": { "$ref": "#/$defs/numberOrNull" },
+        "excluded": { "type": "boolean" }
+      }
+    },
+    "modeEntry": {
+      "type": "object",
+      "description": "一阶识别模态与所用频带的对应关系。",
+      "additionalProperties": false,
+      "required": ["order", "band_index", "order_in_band"],
+      "properties": {
+        "order": { "type": "integer", "minimum": 0 },
+        "frequency": { "type": "number" },
+        "band_index": { "type": "integer", "minimum": 0 },
+        "order_in_band": { "type": "integer", "minimum": 0 },
+        "band_lower": { "type": "number" },
+        "band_upper": { "type": "number" },
+        "f0": { "$ref": "#/$defs/vector" }
+      }
+    },
+    "separationPair": {
+      "type": "object",
+      "description": "同一频带内一对模态的频率区分度。",
+      "additionalProperties": false,
+      "required": ["modes", "band_index"],
+      "properties": {
+        "modes": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "band_index": { "type": "integer", "minimum": 0 },
+        "df": { "$ref": "#/$defs/numberOrNull" },
+        "half_power_bw": { "$ref": "#/$defs/vector" },
+        "separation_in_bw": { "$ref": "#/$defs/numberOrNull" },
+        "dense": { "type": "boolean" },
+        "mac": { "$ref": "#/$defs/numberOrNull" },
+        "f_correlation": { "$ref": "#/$defs/numberOrNull" }
+      }
+    },
+    "parameterIndexEntry": {
+      "type": "object",
+      "description": "协方差矩阵第 index 个对角元对应的参数。不同分组另带 band_index / order / group / coord 等定位字段。",
+      "required": ["index", "name", "kind"],
+      "additionalProperties": true,
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "name": { "type": "string" },
+        "kind": { "type": "string" },
+        "mode": { "type": ["integer", "null"] },
+        "symbol": { "type": "string" },
+        "unit": { "type": "string" }
+      }
+    },
+    "spatial": {
+      "type": "object",
+      "description": "振型空间可视化：几何描述与已落盘的图片清单。",
+      "additionalProperties": false,
+      "required": ["available", "channel_names", "connections", "figures"],
+      "properties": {
+        "available": { "type": "boolean" },
+        "reason": { "$ref": "#/$defs/stringOrNull" },
+        "channel_names": { "type": "array", "items": { "type": "string" } },
+        "connections": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "figures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["order", "path", "complex"],
+            "properties": {
+              "order": { "type": "integer", "minimum": 0 },
+              "path": { "type": "string" },
+              "complex": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "shapeUncertaintyEntry": {
+      "type": "object",
+      "description": "一阶振型的识别不确定性。",
+      "additionalProperties": true,
+      "required": ["order", "coefv", "channel_index", "std_per_channel", "ci95_halfwidth_per_channel"],
+      "properties": {
+        "order": { "type": "integer", "minimum": 0 },
+        "complex": { "type": "boolean" },
+        "coefv": { "$ref": "#/$defs/numberOrNull" },
+        "channel_index": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+        "std_per_channel": { "$ref": "#/$defs/vector" },
+        "ci95_halfwidth_per_channel": { "$ref": "#/$defs/vector" },
+        "shape": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/vector" },
+            { "$ref": "#/$defs/complexFlat" }
+          ]
+        },
+        "cov": { "$ref": "#/$defs/matrix" }
+      }
+    },
+    "recognition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bands", "modes", "separation", "joint_covariance", "joint_covariance_matrix", "shape_uncertainty"],
+      "properties": {
+        "bands": { "type": "array", "items": { "$ref": "#/$defs/bandEntry" } },
+        "modes": { "type": "array", "items": { "$ref": "#/$defs/modeEntry" } },
+        "separation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["criterion", "threshold", "pairs", "dense_pairs", "has_dense_modes"],
+          "properties": {
+            "criterion": { "type": "string" },
+            "threshold": { "type": "number" },
+            "pairs": { "type": "array", "items": { "$ref": "#/$defs/separationPair" } },
+            "dense_pairs": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "has_dense_modes": { "type": "boolean" }
+          }
+        },
+        "joint_covariance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["index", "size", "structure", "note"],
+          "properties": {
+            "index": { "type": "array", "items": { "$ref": "#/$defs/parameterIndexEntry" } },
+            "size": { "type": "integer", "minimum": 1 },
+            "structure": { "type": "string" },
+            "note": { "type": "string" }
+          }
+        },
+        "joint_covariance_matrix": { "$ref": "#/$defs/matrix" },
+        "shape_uncertainty": { "type": "array", "items": { "$ref": "#/$defs/shapeUncertaintyEntry" } },
+        "spectra": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["freqs", "psd_diag", "sv", "bands"],
+              "properties": {
+                "freqs": { "$ref": "#/$defs/vector" },
+                "psd_diag": { "$ref": "#/$defs/matrix", "description": "各通道自谱，每行一个通道。" },
+                "sv": { "$ref": "#/$defs/matrix", "description": "奇异值谱，每行一条曲线，按降序。" },
+                "stride": { "type": "integer", "minimum": 1 },
+                "n_freq_full": { "type": "integer", "minimum": 1 },
+                "n_freq_kept": { "type": "integer", "minimum": 1 },
+                "reduction": { "type": "string" },
+                "note": { "type": "string" },
+                "bands": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["band_index", "lower", "upper"],
+                    "properties": {
+                      "band_index": { "type": "integer", "minimum": 0 },
+                      "lower": { "type": "number" },
+                      "upper": { "type": "number" },
+                      "f0": { "$ref": "#/$defs/vector" },
+                      "n_freq_points": { "type": "integer", "minimum": 0 },
+                      "peak_freq": { "$ref": "#/$defs/numberOrNull" }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "spatial": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/spatial" }
+          ]
+        }
+      }
+    },
+    "assembly": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phi", "channel_index", "shape_uncertainty", "uncertainty", "posterior_covariance", "index"],
+      "properties": {
+        "phi": {
+          "oneOf": [
+            { "$ref": "#/$defs/vector" },
+            { "$ref": "#/$defs/complexMatrix" }
+          ],
+          "description": "组装后的全局振型，每列一阶。"
+        },
+        "channel_index": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+        "shape_uncertainty": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["coefv", "std_per_channel", "ci95_halfwidth_per_channel", "channel_index"],
+          "properties": {
+            "coefv": { "$ref": "#/$defs/numberOrNull" },
+            "std_per_channel": { "$ref": "#/$defs/vector" },
+            "ci95_halfwidth_per_channel": { "$ref": "#/$defs/vector" },
+            "channel_index": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+            "per_mode": { "type": "array", "items": { "$ref": "#/$defs/shapeUncertaintyEntry" } }
+          }
+        },
+        "uncertainty": {
+          "type": "object",
+          "description": "识别不确定性与组装不确定性的合成。三项按迹相加：trace_total = trace_assembly + trace_recognition。",
+          "additionalProperties": false,
+          "required": ["method", "total_coefv", "assembly_coefv", "recognition_coefv"],
+          "properties": {
+            "method": { "type": "string" },
+            "total_coefv": { "$ref": "#/$defs/numberOrNull" },
+            "assembly_coefv": { "$ref": "#/$defs/numberOrNull" },
+            "recognition_coefv": { "$ref": "#/$defs/numberOrNull" },
+            "trace_total": { "$ref": "#/$defs/numberOrNull" },
+            "trace_assembly": { "$ref": "#/$defs/numberOrNull" },
+            "trace_recognition": { "$ref": "#/$defs/numberOrNull" },
+            "note": { "type": "string" }
+          }
+        },
+        "covariance_total": { "$ref": "#/$defs/matrix" },
+        "covariance_from_assembly": { "$ref": "#/$defs/matrix" },
+        "covariance_recognition": { "$ref": "#/$defs/matrix" },
+        "posterior_covariance": {
+          "$ref": "#/$defs/matrix",
+          "description": "组装与识别各参数的后验协方差，每项的含义见 index。"
+        },
+        "index": { "type": "array", "items": { "$ref": "#/$defs/parameterIndexEntry" } },
+        "setups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["group_index"],
+            "properties": {
+              "group_index": { "type": "integer", "minimum": 0 },
+              "channels": { "type": "array", "items": { "type": "integer", "minimum": 0 } }
+            }
+          }
+        },
+        "spatial": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/spatial" }
+          ]
+        },
+        "coherence": { "$ref": "#/$defs/complexMatrix" },
+        "shape_uncertainty_per_mode": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["order", "coefv"],
+            "properties": {
+              "order": { "type": "integer", "minimum": 0 },
+              "coefv": { "$ref": "#/$defs/numberOrNull" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
