@@ -5,6 +5,9 @@
 Python 与 MATLAB 两套实现独立编写、互为校核，输入输出契约一致，均可被其余软件或
 智能体直接调用。
 
+[![python-tests](https://github.com/744613417/bayoma-oma/actions/workflows/python-tests.yml/badge.svg)](https://github.com/744613417/bayoma-oma/actions/workflows/python-tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ## 交付内容
 
 | 内容 | 位置 | 说明 |

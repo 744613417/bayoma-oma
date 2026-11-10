@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "如本仓库对你的研究有帮助，请按下列格式引用。"
+title: "BAYOMA：自动贝叶斯运行模态分析双实现（Python 与 MATLAB）"
+abstract: >-
+  按《Operational Modal Analysis: Modeling, Bayesian Inference, Uncertainty Laws》
+  （Springer）第 10–16 章实现的环境振动数据自动贝叶斯模态识别，含单模态、多模态、
+  多测组、异步数据识别，后验协方差、自动选带、不确定度定律与结果分组输出。
+type: software
+authors:
+  - name: "BAYOMA contributors"
+license: MIT
+repository-code: "https://github.com/744613417/bayoma-oma"
+keywords:
+  - 运行模态分析
+  - 贝叶斯识别
+  - 结构动力学
+  - 结构健康监测
+  - operational modal analysis
+  - Bayesian inference
+  - system identification
+version: 0.1.0
+date-released: "2026-11-10"
+references:
+  - type: book
+    title: "Operational Modal Analysis: Modeling, Bayesian Inference, Uncertainty Laws"
+    authors:
+      - family-names: Au
+        given-names: Siu-Kui
+    publisher:
+      name: Springer
+    year: 2017
