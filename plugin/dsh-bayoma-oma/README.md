@@ -4,8 +4,11 @@ DeepSeek-Harness 插件包，把 `bayoma-oma` 技能注册到当前 profile。�
 《Operational Modal Analysis: Modeling, Bayesian Inference, Uncertainty Laws》
 （Springer）第 10–16 章的自动贝叶斯模态识别方法（单模态、多模态含密集模态、多测组含
 参考自由度凝聚、异步数据（单阶与多阶）、后验协方差、自动选带、不确定度定律、Fisher
-信息矩阵，以及分「识别结果」与「组装结果」两组的结果输出），配套实现在本仓库根目录
-下的 `python/` 与 `matlab/`。
+信息矩阵，以及分「识别结果」与「组装结果」两组的结果输出），配套实现在
+[bayoma-oma](https://github.com/744613417/bayoma-oma) 仓库根目录下的 `python/` 与 `matlab/`。
+
+本插件是那个仓库的一部分，可直接从该仓库取得；也可以只把 `skills/bayoma-oma/SKILL.md`
+复制到账号级技能目录使用，不必安装插件。
 
 ## 组成
 
@@ -19,10 +22,16 @@ DeepSeek-Harness 插件包，把 `bayoma-oma` 技能注册到当前 profile。�
 
 ## 安装
 
-在工作区的包目录上执行：
+先取得配套实现（插件与技能都在这个仓库里）：
+
+```bash
+git clone https://github.com/744613417/bayoma-oma.git
+```
+
+然后在 Harness 的 `plugin_manager` 上安装本目录：
 
 ```text
-plugin_manager action=install_bundle target=<本机绝对路径>\plugin/dsh-bayoma-oma
+plugin_manager action=install_bundle target=<本机绝对路径>\bayoma-oma\plugin\dsh-bayoma-oma
 ```
 
 安装后插件进入当前 profile 的 `dsh.profile.bundles`，对所有会话生效并在重启后保留。

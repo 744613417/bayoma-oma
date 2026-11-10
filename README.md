@@ -26,6 +26,16 @@ Python 与 MATLAB 两套实现独立编写、互为校核，输入输出契约�
 | 课本技能 | `skill/` | 与课本对应的技能包 |
 | 插件 | `plugin/` | 在 Harness 中加载的插件 |
 
+## 安装
+
+```bash
+git clone https://github.com/744613417/bayoma-oma.git
+cd bayoma-oma
+pip install -e ".[plot]"      # 只要核心功能可去掉 [plot]，它只用于空间可视化
+```
+
+不装成包也能用：直接把 `python/` 加进 `sys.path`，见下节示例。
+
 ## 快速开始
 
 Python：
